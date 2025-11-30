@@ -1,22 +1,26 @@
-# Foundry
-cache/
+.DS_STORE
+/target*
+/*.sol
+CLAUDE.md
+
+# Foundry artifacts
 out/
-out-default/
-forge-artifacts/
+snapshots/
 
-# Forge 测试缓存
-cache_forge
-*.t.sol.sol
+# IDEs and extensions
+.idea
+.vscode
+.claude
+.zed
 
-# VSCode
-.vscode/
-!.vscode/extensions.json
-!.vscode/settings.json
-
-# macOS
-.DS_Store
-
-# 其他常见
+# NPM
 .env
-broadcast/
-script/*.s.sol
+node_modules
+dist
+bin
+_
+*.tgz
+.vercel
+.vite
+.wrangler
+*.zip

@@ -1,0 +1,6 @@
+# foundry.toml —— 只保留这几行，删掉其他所有注释和默认项
+[profile.default]
+remappings = [
+    "@openzeppelin/contracts/=lib/openzeppelin-contracts/contracts/",
+    "@openzeppelin/=lib/openzeppelin-contracts/contracts/"
+]
