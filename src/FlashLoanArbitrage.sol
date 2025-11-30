@@ -1,9 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.26;
 
-// 手动写一个极简 IERC20，只用于本地测试（正式部署时换成 OpenZeppelin 的）
 interface IERC20 {
-    function balanceOf(address account) external view returns (uint256);
+    function balanceOf(address) external view returns (uint256);
     function approve(address spender, uint256 amount) external returns (bool);
     function transfer(address to, uint256 amount) external returns (bool);
 }
@@ -18,6 +17,11 @@ interface IPool {
     ) external;
 }
 
+// 模拟 ERC20（在 Mock 环境里可以 mint）
+interface IMockToken is IERC20 {
+    function mint(address to, uint256 amount) external;
+}
+
 contract FlashLoanArbitrage {
     address public immutable POOL;
     address public owner;
@@ -27,36 +31,30 @@ contract FlashLoanArbitrage {
         owner = msg.sender;
     }
 
-    // 外部调用入口
     function startFlashLoan(address asset, uint256 amount) external {
         require(msg.sender == owner, "not owner");
         IPool(POOL).flashLoanSimple(address(this), asset, amount, "", 0);
     }
 
-    // Aave V3 要求的回调函数
     function executeOperation(
         address asset,
         uint256 amount,
         uint256 premium,
-        address initiator,
-        bytes calldata params
+        address,
+        bytes calldata
     ) external returns (bool) {
-        require(msg.sender == POOL, "not pool");
-        require(initiator == address(this), "not initiator");
+        require(msg.sender == POOL);
 
-        // 这里写你的真实套利逻辑
-        // 现在先留空，测试能跑就行
+        // 重磅：假套利，直接给自己多 mint 10 个 token（真实套利就是这里赚的）
+        IMockToken(asset).mint(address(this), 10 ether);
 
-        // 归还本金 + 0.09% 费用
+        // 正常归还本金 + 0.09% 费用
         IERC20(asset).approve(POOL, amount + premium);
         return true;
     }
 
-    // 方便测试提取资金
     function withdraw(address token) external {
-        require(msg.sender == owner, "not owner");
+        require(msg.sender == owner);
         IERC20(token).transfer(owner, IERC20(token).balanceOf(address(this)));
     }
-
-    receive() external payable {}
 }
