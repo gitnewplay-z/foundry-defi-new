@@ -1,14 +1,22 @@
-# Compiler files
+# Foundry
 cache/
 out/
+out-default/
+forge-artifacts/
 
-# Ignores development broadcast logs
-!/broadcast
-/broadcast/*/31337/
-/broadcast/**/dry-run/
+# Forge 测试缓存
+cache_forge
+*.t.sol.sol
 
-# Docs
-docs/
+# VSCode
+.vscode/
+!.vscode/extensions.json
+!.vscode/settings.json
 
-# Dotenv file
+# macOS
+.DS_Store
+
+# 其他常见
 .env
+broadcast/
+script/*.s.sol
